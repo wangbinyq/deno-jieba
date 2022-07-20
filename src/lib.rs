@@ -1,4 +1,4 @@
-use deno_bindgen::deno_bindgen;
+use wasm_bindgen::prelude::*;
 use jieba_rs::{Jieba, KeywordExtract, TextRank, TokenizeMode, TFIDF};
 use lazy_static::lazy_static;
 use std::io::BufReader;
@@ -14,20 +14,20 @@ lazy_static! {
 
 // =======================================================
 
-#[deno_bindgen]
-fn get_row_separator() -> String {
+#[wasm_bindgen]
+pub fn get_row_separator() -> String {
     SEPARATOR_ROW.into()
 }
 
-#[deno_bindgen]
-fn get_col_separator() -> String {
+#[wasm_bindgen]
+pub fn get_col_separator() -> String {
     SEPARATOR_COL.into()
 }
 
 // =======================================================
 
-#[deno_bindgen(non_blocking)]
-fn load_dict(buf: &[u8]) -> String {
+#[wasm_bindgen]
+pub fn load_dict(buf: &[u8]) -> String {
     JIEBA
         .lock()
         .unwrap()
@@ -37,8 +37,8 @@ fn load_dict(buf: &[u8]) -> String {
         .into()
 }
 
-#[deno_bindgen]
-fn add_word(word: &str, freq: i32, tag: &str) -> usize {
+#[wasm_bindgen]
+pub fn add_word(word: &str, freq: i32, tag: &str) -> usize {
     JIEBA.lock().unwrap().add_word(
         word,
         if freq < 0 { None } else { Some(freq as usize) },
@@ -46,20 +46,20 @@ fn add_word(word: &str, freq: i32, tag: &str) -> usize {
     )
 }
 
-#[deno_bindgen]
-fn suggest_freq(segment: &str) -> usize {
+#[wasm_bindgen]
+pub fn suggest_freq(segment: &str) -> usize {
     JIEBA.lock().unwrap().suggest_freq(segment)
 }
 
-#[deno_bindgen]
-fn reset() {
+#[wasm_bindgen]
+pub fn reset() {
     *JIEBA.lock().unwrap() = Jieba::new();
 }
 
 // =======================================================
 
-#[deno_bindgen(non_blocking)]
-fn cut(sentence: &str, hmm: u8) -> String {
+#[wasm_bindgen]
+pub fn cut(sentence: &str, hmm: u8) -> String {
     JIEBA
         .lock()
         .unwrap()
@@ -67,13 +67,13 @@ fn cut(sentence: &str, hmm: u8) -> String {
         .join(SEPARATOR_ROW)
 }
 
-#[deno_bindgen(non_blocking)]
-fn cut_all(sentence: &str) -> String {
+#[wasm_bindgen]
+pub fn cut_all(sentence: &str) -> String {
     JIEBA.lock().unwrap().cut_all(sentence).join(SEPARATOR_ROW)
 }
 
-#[deno_bindgen(non_blocking)]
-fn cut_for_search(sentence: &str, hmm: u8) -> String {
+#[wasm_bindgen]
+pub fn cut_for_search(sentence: &str, hmm: u8) -> String {
     JIEBA
         .lock()
         .unwrap()
@@ -83,8 +83,8 @@ fn cut_for_search(sentence: &str, hmm: u8) -> String {
 
 // =======================================================
 
-#[deno_bindgen(non_blocking)]
-fn tag(sentence: &str, hmm: u8) -> String {
+#[wasm_bindgen]
+pub fn tag(sentence: &str, hmm: u8) -> String {
     JIEBA
         .lock()
         .unwrap()
@@ -95,8 +95,8 @@ fn tag(sentence: &str, hmm: u8) -> String {
         .join(SEPARATOR_ROW)
 }
 
-#[deno_bindgen(non_blocking)]
-fn tokenize(sentence: &str, mode: u8, hmm: u8) -> String {
+#[wasm_bindgen]
+pub fn tokenize(sentence: &str, mode: u8, hmm: u8) -> String {
     JIEBA
         .lock()
         .unwrap()
@@ -121,22 +121,22 @@ fn tokenize(sentence: &str, mode: u8, hmm: u8) -> String {
 
 // =======================================================
 
-// #[deno_bindgen(non_blocking)]
+// #[wasm_bindgen]
 // fn load_idf(buf: &[u8]) -> String {
 //     todo!()
 // }
 
-// #[deno_bindgen]
+// #[wasm_bindgen]
 // fn add_stop_word(word: &str) -> u8 {
 //     todo!()
 // }
 
-// #[deno_bindgen]
+// #[wasm_bindgen]
 // fn remove_stop_word(word: &str) -> u8 {
 //     todo!()
 // }
 
-// #[deno_bindgen]
+// #[wasm_bindgen]
 // fn set_stop_words(stop_words: &str) -> u8 {
 //     todo!()
 // }
@@ -163,8 +163,8 @@ fn extract_tags<T: KeywordExtract>(
         .join(SEPARATOR_ROW)
 }
 
-#[deno_bindgen(non_blocking)]
-fn extract_tags_by_tfidf(sentence: &str, top_k: usize, allowed_pos: &str) -> String {
+#[wasm_bindgen]
+pub fn extract_tags_by_tfidf(sentence: &str, top_k: usize, allowed_pos: &str) -> String {
     extract_tags(
         TFIDF::new_with_jieba(&JIEBA.lock().expect(MUTEXERROR)),
         sentence,
@@ -173,8 +173,8 @@ fn extract_tags_by_tfidf(sentence: &str, top_k: usize, allowed_pos: &str) -> Str
     )
 }
 
-#[deno_bindgen(non_blocking)]
-fn extract_tags_by_textrank(sentence: &str, top_k: usize, allowed_pos: &str) -> String {
+#[wasm_bindgen]
+pub fn extract_tags_by_textrank(sentence: &str, top_k: usize, allowed_pos: &str) -> String {
     extract_tags(
         TextRank::new_with_jieba(&JIEBA.lock().expect(MUTEXERROR)),
         sentence,

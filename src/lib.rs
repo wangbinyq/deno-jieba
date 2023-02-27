@@ -38,6 +38,12 @@ pub fn load_dict(buf: &[u8]) -> String {
 }
 
 #[wasm_bindgen]
+pub fn with_dict(buf: &[u8]) {
+    *JIEBA.lock().unwrap() = Jieba::with_dict(&mut BufReader::new(buf))
+                                  .unwrap();
+}
+
+#[wasm_bindgen]
 pub fn add_word(word: &str, freq: i32, tag: &str) -> usize {
     JIEBA.lock().unwrap().add_word(
         word,

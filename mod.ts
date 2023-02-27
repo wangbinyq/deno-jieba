@@ -101,6 +101,23 @@ export const loadDict = (source: Uint8Array | string | URL): string =>
     : Lib.load_dict(source);
 
 /**
+ * Init with extra dictionary
+ * @param {Uint8Array | string | URL} source
+ * @returns {Promise<string>}
+ *
+ * ## Examples
+ *
+ * ```ts
+ * import { withDict } from './mod';
+ *  withDict('my-dictionary-path');
+ * ```
+ */
+export const withDict = (source: Uint8Array | string | URL): void =>
+  typeof source === "string" || source instanceof URL
+    ? Lib.with_dict(Deno.readFileSync(source))
+    : Lib.with_dict(source);
+
+/**
  * Suggest word frequency to force the characters in a word to be joined or splitted
  * @param {string} word
  * @returns {number}
